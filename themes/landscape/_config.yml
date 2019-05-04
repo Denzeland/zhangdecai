@@ -21,7 +21,7 @@ widgets:
 index_widgets:
 # - category
 # - tagcloud
-# - archive
+- archive
 
 # widget behavior
 archive_type: 'monthly'

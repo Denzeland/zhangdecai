@@ -3,19 +3,19 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle:
-description:
+title: Harry's Blog
+subtitle: 记录学习和工作中的一些总结和思考
+description: 学习笔记，odoo前端，Vue学习，react学习
 keywords:
-author: John Doe
-language:
+author: Harry Zhang
+language: zh-CN
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://blog.zhangdecai.top/
 root: /
-permalink: :year/:month/:day/:title/
+permalink: post/:title/
 permalink_defaults:
 
 # Directory
@@ -73,7 +73,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: vexo
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
