@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="学习笔记，odoo前端，Vue学习，react学习">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      node异步编程 | Harry&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Harry's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">文章归档</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">文章归档</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>node异步编程</h2>
+  <p class="post-date">2019-10-15</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="node异步实现的方式和异步流程控制"><a href="#node异步实现的方式和异步流程控制" class="headerlink" title="node异步实现的方式和异步流程控制"></a>node异步实现的方式和异步流程控制</h2><p>node中的异步实现主要有两种方式，回调函数和事件发射器。回调函数处理一次性事件，事件发射器可以处理重复性事件。在异步程序的执行过程中，有些任务可能会随时发生，跟程序中的其他部分在做什么没关系，什么时候做这些任务都不会出问题。但也有些任务只能在某些特定的任务之前或之后做。让一组异步任务顺序执行的概念被Node社区称为流程控制。下面看这两个异步实现和流程控制：</p>
+<h3 id="回调函数"><a href="#回调函数" class="headerlink" title="回调函数"></a>回调函数</h3><p>一次性的动作要靠注册回调函数来执行，下面是一个回调函数实现http服务器的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">const http = require(&apos;http&apos;); </span><br><span class="line">const fs = require(&apos;fs&apos;); </span><br><span class="line">http.createServer((req, res) =&gt; &#123;</span><br><span class="line"></span><br><span class="line">    if (req.url == &apos;/&apos;) &#123;</span><br><span class="line">        fs.readFile(&apos;./titles.json&apos;, (err, data) =&gt; &#123;</span><br><span class="line">            if (err) &#123;</span><br><span class="line">            console.error(err); </span><br><span class="line">            res.end(&apos;Server Error&apos;); </span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                const titles = JSON.parse(data.toString()); </span><br><span class="line">                fs.readFile(&apos;./template.html&apos;, (err, data) =&gt; &#123;</span><br><span class="line">                    if (err) &#123;</span><br><span class="line">                        console.error(err); </span><br><span class="line">                        res.end(&apos;Server Error&apos;); </span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        const tmpl = data.toString(); </span><br><span class="line">                        const html = tmpl.replace(&apos;%&apos;, titles.join(&apos;&lt;/li&gt;&lt;li&gt;&apos;)); </span><br><span class="line">                        res.writeHead(200, &#123; &apos;Content-Type&apos;: &apos;text/html&apos; &#125;); </span><br><span class="line">                        res.end(html); </span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;).listen(8000, &apos;127.0.0.1&apos;); </span><br></pre></td></tr></table></figure>
+<h3 id="事件发射器"><a href="#事件发射器" class="headerlink" title="事件发射器"></a>事件发射器</h3><p>事件发射器主要是利用events模块的EventEmitter构造函数，实现发布订阅模式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const EventEmitter = require(&apos;events&apos;). EventEmitter; </span><br><span class="line">const channel = new EventEmitter(); </span><br><span class="line"></span><br><span class="line">    channel.on(&apos;join&apos;, () =&gt; &#123;</span><br><span class="line">    console.log(&apos;Welcome!&apos;); </span><br><span class="line"></span><br><span class="line">&#125;); </span><br></pre></td></tr></table></figure>
+<h3 id="异步的流程控制"><a href="#异步的流程控制" class="headerlink" title="异步的流程控制"></a>异步的流程控制</h3><p>异步的流程控制分为两类：串行和并行。需要一个接着一个执行的任务叫作串行任务，不需要一个接着一个执行的任务叫作并行任务。</p>
+<p>可以用回调嵌套的方法实现或者用工具模块实现（如async模块）实现串行任务，并行任务可以用队列实现。下面是一个利用async模块实现的既有串行任务也有并行任务的同时下载文件的示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">const exec = require(&apos;child_process&apos;).exec; </span><br><span class="line">function downloadNodeVersion(version, destination, callback) &#123;</span><br><span class="line">const url = `http://nodejs.org/dist/v$&#123;version&#125;/node-v$&#123;version&#125;.tar.gz` ; </span><br><span class="line">const filepath = `$&#123;destination&#125;/$&#123;version&#125;.tgz` ; </span><br><span class="line">exec( `curl $&#123;url&#125; &gt; $&#123;filepath&#125;` , callback); </span><br><span class="line">&#125;</span><br><span class="line">async.series([</span><br><span class="line">callback =&gt; &#123;</span><br><span class="line">async.parallel([</span><br><span class="line">callback =&gt; &#123;</span><br><span class="line">console.log(&apos;Downloading Node v4.4.7...&apos;); </span><br><span class="line">downloadNodeVersion(&apos;4.4.7&apos;, &apos;/tmp&apos;, callback); </span><br><span class="line">&#125;, </span><br><span class="line">callback =&gt; &#123;</span><br><span class="line">console.log(&apos;Downloading Node v6.3.0...&apos;); </span><br><span class="line">downloadNodeVersion(&apos;6.3.0&apos;, &apos;/tmp&apos;, callback); </span><br><span class="line">&#125;</span><br><span class="line">], callback); </span><br><span class="line">&#125;, </span><br><span class="line">callback =&gt; &#123;</span><br><span class="line">console.log(&apos;Creating archive of downloaded files...&apos;); </span><br><span class="line">exec(</span><br><span class="line">&apos;tar cvf node_distros.tar /tmp/4.4.7.tgz /tmp/6.3.0.tgz&apos;, </span><br><span class="line">err =&gt; &#123;</span><br><span class="line">if (err) throw err; </span><br><span class="line">console.log(&apos;All done!&apos;); </span><br><span class="line">callback(); </span><br><span class="line">&#125;</span><br><span class="line">); </span><br><span class="line">&#125;</span><br><span class="line">]); </span><br></pre></td></tr></table></figure>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Node.js">
+    <span class="tag-code">Node.js</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/post/Ubuntu源码安装odoo12/">
+        <span class="nav-arrow">← </span>
+        
+          Ubuntu源码安装odoo12
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#node异步实现的方式和异步流程控制"><span class="toc-nav-text">node异步实现的方式和异步流程控制</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#回调函数"><span class="toc-nav-text">回调函数</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#事件发射器"><span class="toc-nav-text">事件发射器</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#异步的流程控制"><span class="toc-nav-text">异步的流程控制</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://blog.zhangdecai.top/post/node异步编程/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
