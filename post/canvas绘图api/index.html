@@ -10,7 +10,7 @@
   
   <title>
     
-      linux文件系统的操作 | Harry&#39;s Blog
+      canvas绘图api | Harry&#39;s Blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -114,8 +114,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>linux文件系统的操作</h2>
-  <p class="post-date">2019-10-15</p>
+  <h2>canvas绘图api</h2>
+  <p class="post-date">2019-10-17</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -123,42 +123,58 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h2 id="linux磁盘和文件系统的操作"><a href="#linux磁盘和文件系统的操作" class="headerlink" title="linux磁盘和文件系统的操作"></a>linux磁盘和文件系统的操作</h2><p>linux磁盘和文件系统的操作主要涉及到创建分区， 格式化分区（创建文件系统）和挂载这三步操作，本文主要介绍这三步操作用到的工具和文件系统的一些相关内容。</p>
-<h3 id="磁盘的分区"><a href="#磁盘的分区" class="headerlink" title="磁盘的分区"></a>磁盘的分区</h3><p>分区工具有：</p>
+    <section class="markdown-content"><h2 id="canvas绘图api"><a href="#canvas绘图api" class="headerlink" title="canvas绘图api"></a>canvas绘图api</h2><p>canvas元素自身的宽高和绘图区域的宽高是不同的概念。需要注意的是width和height这两个属性，用css设置的宽高实质上是设置元素自身的宽高，而通过元素对象设置的这两个属性会同时设置自身的宽高和绘图区域的宽高。元素<code>var canvas = document.getElementById(&#39;canvas&#39;)</code>有两个属性和三个方法，列出如下：</p>
 <ul>
-<li>parted：一个文本命令工具，支持MBR和GPT。</li>
-<li>gparted： parted的图形版本</li>
-<li>fdisk： Linux传统的文本命令分区工具，不支持GPT</li>
-<li>gdisk： fdisk的另一个版本，支持GPT，但不支持MBR</li>
+<li>width： 绘图区域的宽度</li>
+<li>height：绘图区域的高度</li>
+<li>getContext(): 返回绘图环境对象，参数’2d’和’3d’</li>
+<li>toDataUrl(type, quality): 返回dataUrl， type为图片类型，quality为0~1之间整数</li>
+<li>toBlob(callback, type, quality): 表示canvas元素图像文件的blob，浏览器会以指向blob的引用去调回调函数，type为图片类型， quality为0~1之间整数</li>
 </ul>
-<p>查看分区表命令：</p>
-<p><code>$ parted -l</code></p>
-<p>重新加载磁盘上的分区表：</p>
-<p><code>$ blockdev --rereadpt /dev/sdf</code></p>
-<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>Linux支持的文件系统有第四扩展文件系统（ext4）、ISO 9660（ iso9660）、 FAT文件系统（ msdos、 vfat、 umsdos）和HFS+（ hfsplus）等，下面讲解文件系统的一些操作：</p>
-<h4 id="创建文件系统"><a href="#创建文件系统" class="headerlink" title="创建文件系统"></a>创建文件系统</h4><p>创建文件系统的工具是mkfs，mkfs是一系列文件系统创建程序的前端界面，如mkfs.fs。 fs是一种文件系统类型。当运行mkfs -t ext4时，实际上运行的是mkfs.ext4。如在/dev/sdf2上创建ext4分区：</p>
-<p><code>$ mkfs -t ext4 /dev/sdf2</code></p>
-<p>查看命令的软连接：</p>
-<p><code>$ ls -l /sbin/mkfs.*</code></p>
-<h4 id="挂载文件系统"><a href="#挂载文件系统" class="headerlink" title="挂载文件系统"></a>挂载文件系统</h4><p>要挂载文件系统，需要有如下数据：</p>
+<p>绘图环境<code>var context = canvas.getContext(&#39;2d&#39;)</code>对象的api:</p>
+<p>属性：</p>
 <ul>
-<li>文件系统所在设备（如磁盘分区，文件系统数据存放的位置）</li>
-<li>文件系统类型</li>
-<li>挂载点</li>
+<li>canvas: 获取关联的canvas元素</li>
+<li>fillstyle：绘图填充使用的颜色、图案</li>
+<li>font: </li>
+<li>globalAlpha</li>
+<li>globalCompsiteOperation</li>
+<li>lineCap</li>
+<li>lineWidth</li>
+<li>lineJoin</li>
+<li>miterLimit</li>
+<li>shadowBlur</li>
+<li>shadowColor</li>
+<li>shadowOffsetX</li>
+<li>shadowOffsetY</li>
+<li>strokeStyle</li>
+<li>textAlign</li>
+<li>textBaseline</li>
 </ul>
-<p>mount命令可以查看当前文件系统状态，至于文件系统的卸载，可以使用umount命令</p>
-<p>例如要挂载/dev/sdf2设备到/home/extra，可以运行下面的命令：</p>
-<p><code>mount -t ext4 /dev/sdf2 /home/extra</code></p>
-<p>一般更好的做法是使用文件系统的UUID来挂载，而不是文件设备名，可以使用blkid（ block ID）命令查看设备和其对应的文件系统及UUID，然后使用 UUID=来通过UUID挂载文件系统，如：</p>
-<p><code>mount UUID=a9011c2b-1c03-4288-b3fe-8ba961ab0898 /home/extra</code></p>
+<p>状态保存与恢复：</p>
+<ul>
+<li>save()</li>
+<li>restore()</li>
+</ul>
+<p>绘图方法：</p>
+<ul>
+<li>arc()</li>
+<li>beginPath()</li>
+<li>clearRect()</li>
+<li>fill()</li>
+<li>fillText()</li>
+<li>lineTo()</li>
+<li>moveTo()</li>
+<li>stroke()</li>
+</ul>
 </section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#Linux">
-    <span class="tag-code">Linux</span>
+  <a href="/tags#前端开发">
+    <span class="tag-code">前端开发</span>
   </a>
 
       </div>
@@ -169,17 +185,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/post/node异步编程/">
+      <a class="nav-left" href="/post/linux文件系统的操作/">
         <span class="nav-arrow">← </span>
         
-          node异步编程
+          linux文件系统的操作
         
       </a>
     
     
-      <a class="nav-right" href="/post/canvas绘图api/">
+      <a class="nav-right" href="/post/import-psycopg2报错undefined-symbol-PQconninfo的解决方法/">
         
-          canvas绘图api
+          import psycopg2报错undefined symbol: PQconninfo的解决方法
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -204,7 +220,7 @@
   <div class="toc-main">
     <strong class="toc-title">文章目录</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#linux磁盘和文件系统的操作"><span class="toc-nav-text">linux磁盘和文件系统的操作</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#磁盘的分区"><span class="toc-nav-text">磁盘的分区</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#文件系统"><span class="toc-nav-text">文件系统</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#创建文件系统"><span class="toc-nav-text">创建文件系统</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#挂载文件系统"><span class="toc-nav-text">挂载文件系统</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#canvas绘图api"><span class="toc-nav-text">canvas绘图api</span></a></li></ol>
     
   </div>
 </aside>
@@ -214,7 +230,7 @@
 
 <script>
   (function () {
-    var url = 'https://blog.zhangdecai.top/post/linux文件系统的操作/';
+    var url = 'https://blog.zhangdecai.top/post/canvas绘图api/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
