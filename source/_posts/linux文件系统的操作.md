@@ -31,9 +31,7 @@ Linux支持的文件系统有第四扩展文件系统（ext4）、ISO 9660（ is
 
 #### 创建文件系统
 
-创建文件系统的工具是mkfs，mkfs是一系列文件系统创建程序的前端界面，如mkfs.fs。 fs是一种文件系统类型。当运行mkfs -t ext4时，实际上运行的是mkfs.ext4。ru
-
-如在/dev/sdf2上创建ext4分区：
+创建文件系统的工具是mkfs，mkfs是一系列文件系统创建程序的前端界面，如mkfs.fs。 fs是一种文件系统类型。当运行mkfs -t ext4时，实际上运行的是mkfs.ext4。如在/dev/sdf2上创建ext4分区：
 
 `$ mkfs -t ext4 /dev/sdf2`
 
