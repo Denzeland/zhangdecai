@@ -10,7 +10,7 @@
   
   <title>
     
-      import psycopg2报错undefined symbol: PQconninfo的解决方法 | Harry&#39;s Blog
+      React高阶组件 | Harry&#39;s Blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -114,8 +114,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>import psycopg2报错undefined symbol: PQconninfo的解决方法</h2>
-  <p class="post-date">2019-10-18</p>
+  <h2>React高阶组件</h2>
+  <p class="post-date">2019-10-20</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -123,19 +123,34 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h2 id="import-psycopg2报错undefined-symbol-PQconninfo的解决方法"><a href="#import-psycopg2报错undefined-symbol-PQconninfo的解决方法" class="headerlink" title="import psycopg2报错undefined symbol: PQconninfo的解决方法"></a>import psycopg2报错undefined symbol: PQconninfo的解决方法</h2><p>在安装odoo后启动时，代码在执行import psycopg2导入psycopg2时报错，最后的描述信息是undefined symbol: PQconninfo，猜测应该是连接数据库时出错，网上搜索一番最后解决了这个问题。这个问题出现是psycopg2在运行过程中所用的libpq动态库和安装的postgresql的libpq动态库不一致导致的，所以要让psycopg2在运行过程中所用的libpq动态库指向安装的postgresql的libpq动态库才能解决这个问题。</p>
-<h3 id="第一步：查看psycopg2在运行过程中所用的libpq动态库"><a href="#第一步：查看psycopg2在运行过程中所用的libpq动态库" class="headerlink" title="第一步：查看psycopg2在运行过程中所用的libpq动态库"></a>第一步：查看psycopg2在运行过程中所用的libpq动态库</h3><p><code>$ ldd /path/to/packages/psycopg2/xxx.so | grep libpq</code></p>
-<p>上面的xxx不同的环境下名称可能不一样，具体以实际环境为准</p>
-<h3 id="第二步：进入动态库的目录，删除这个libpq动态库文件"><a href="#第二步：进入动态库的目录，删除这个libpq动态库文件" class="headerlink" title="第二步：进入动态库的目录，删除这个libpq动态库文件"></a>第二步：进入动态库的目录，删除这个libpq动态库文件</h3><p><code>$ cd /yourpath/lib64</code><br><code>$ rm libpq.so.5</code></p>
-<h3 id="第三步：给postgresql安装目录下lib目录下的libpq动态库在当前目录创建一个软链接："><a href="#第三步：给postgresql安装目录下lib目录下的libpq动态库在当前目录创建一个软链接：" class="headerlink" title="第三步：给postgresql安装目录下lib目录下的libpq动态库在当前目录创建一个软链接："></a>第三步：给postgresql安装目录下lib目录下的libpq动态库在当前目录创建一个软链接：</h3><p><code>$ ln -s /your/postgresql/path/lib/libpq.so.5 ./</code></p>
-<h3 id="第四步：重新安装psycopg2，问题解决。"><a href="#第四步：重新安装psycopg2，问题解决。" class="headerlink" title="第四步：重新安装psycopg2，问题解决。"></a>第四步：重新安装psycopg2，问题解决。</h3></section>
+    <section class="markdown-content"><h3 id="React高阶组件"><a href="#React高阶组件" class="headerlink" title="React高阶组件"></a>React高阶组件</h3><p>高阶组件（ higher-order component），类似于高阶函数，它接受 React 组件作为输入，输出一个新的 React 组件。实现高阶组件的方法有如下两种：</p>
+<ul>
+<li>属性代理（ props proxy） 。高阶组件通过被包裹的 React 组件来操作 props</li>
+<li>反向继承（ inheritance inversion） 。高阶组件继承于被包裹的 React 组件</li>
+</ul>
+<p>下面讲解这两种实现方式：</p>
+<ol>
+<li>属性代理</li>
+</ol>
+<p>属性代理是常见高阶组件的实现方法，我们通过一个例子来说明：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'React'</span>;</span><br><span class="line"><span class="keyword">const</span> MyContainer = <span class="function">(<span class="params">WrappedComponent</span>) =&gt;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">        render() &#123;</span><br><span class="line">            <span class="keyword">return</span> &lt;WrappedComponent &#123;...this.props&#125; /&gt;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>从这里看到最重要的部分是 render 方法中返回了传入 WrappedComponent 的 React 组件。这样，我们就可以通过高阶组件来传递 props，这种方法即为属性代理。高阶组件可以这样使用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'React'</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> MyContainer(MyComponent);</span><br></pre></td></tr></table></figure>
+<p>或者使用装饰器:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'React'</span>;</span><br><span class="line"></span><br><span class="line">@MyContainer</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">render() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> MyComponent;</span><br></pre></td></tr></table></figure></p>
+<p>属性代理可以控制 props, 通过 refs 使用引用, 抽象 state还可以使用其他元素包裹 WrappedComponent</p>
+<ol start="2">
+<li>反向继承</li>
+</ol>
+<p>从字面意思上看，它一定与继承特性相关。我们同样来看一个简单的实现：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MyContainer = <span class="function">(<span class="params">WrappedComponent</span>) =&gt;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">WrappedComponent</span> </span>&#123;</span><br><span class="line">        render() &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.render();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>正如所见，高阶组件返回的组件继承于 WrappedComponent。因为被动地继承了 WrappedComponent，所有的调用都会反向，这也是这种方法的由来。反向继承可以渲染劫持，</p>
+</section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#笔记">
-    <span class="tag-code">笔记</span>
+  <a href="/tags#前端开发">
+    <span class="tag-code">前端开发</span>
   </a>
 
       </div>
@@ -146,17 +161,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/post/canvas绘图api/">
+      <a class="nav-left" href="/post/import-psycopg2报错undefined-symbol-PQconninfo的解决方法/">
         <span class="nav-arrow">← </span>
         
-          canvas绘图api
+          import psycopg2报错undefined symbol: PQconninfo的解决方法
         
       </a>
     
     
-      <a class="nav-right" href="/post/React高阶组件/">
+      <a class="nav-right" href="/post/python实现树莓派中转扫码枪/">
         
-          React高阶组件
+          python实现树莓派中转扫码枪
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -181,7 +196,7 @@
   <div class="toc-main">
     <strong class="toc-title">文章目录</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#import-psycopg2报错undefined-symbol-PQconninfo的解决方法"><span class="toc-nav-text">import psycopg2报错undefined symbol: PQconninfo的解决方法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第一步：查看psycopg2在运行过程中所用的libpq动态库"><span class="toc-nav-text">第一步：查看psycopg2在运行过程中所用的libpq动态库</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第二步：进入动态库的目录，删除这个libpq动态库文件"><span class="toc-nav-text">第二步：进入动态库的目录，删除这个libpq动态库文件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第三步：给postgresql安装目录下lib目录下的libpq动态库在当前目录创建一个软链接："><span class="toc-nav-text">第三步：给postgresql安装目录下lib目录下的libpq动态库在当前目录创建一个软链接：</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第四步：重新安装psycopg2，问题解决。"><span class="toc-nav-text">第四步：重新安装psycopg2，问题解决。</span></a></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#React高阶组件"><span class="toc-nav-text">React高阶组件</span></a></li></ol>
     
   </div>
 </aside>
@@ -191,7 +206,7 @@
 
 <script>
   (function () {
-    var url = 'https://blog.zhangdecai.top/post/import-psycopg2报错undefined-symbol-PQconninfo的解决方法/';
+    var url = 'https://blog.zhangdecai.top/post/React高阶组件/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({

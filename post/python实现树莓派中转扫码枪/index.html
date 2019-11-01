@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="学习笔记，odoo前端，Vue学习，react学习">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      python实现树莓派中转扫码枪 | Harry&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Harry's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">文章归档</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">文章归档</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>python实现树莓派中转扫码枪</h2>
+  <p class="post-date">2019-11-01</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h3 id="python实现树莓派中转扫码枪"><a href="#python实现树莓派中转扫码枪" class="headerlink" title="python实现树莓派中转扫码枪"></a>python实现树莓派中转扫码枪</h3><p>最近在做一个项目涉及到利用树莓派来作为媒介， 读入扫码枪的数据并处理数据，处理完后再输出数据到和电脑的问题，想了一下如果通过网络通信的话，涉及到寻找ip比较复杂，所以选择了通过串口来和电脑通信，最后实现了用python操作串口收发数据及整个项目的需求，下面记录下扫码枪数据的读取和串口操作的过程。</p>
+<h3 id="使用串口前树莓派的配置"><a href="#使用串口前树莓派的配置" class="headerlink" title="使用串口前树莓派的配置"></a>使用串口前树莓派的配置</h3><p>要使用树莓派的串口来为我们自由使用收发数据，需要改两个配置，为什么要改这两个配置，<a href="https://blog.csdn.net/Tang_Chuanlin/article/details/92847343" target="_blank" rel="noopener">详细信息可以参考</a><br>：</p>
+<ol>
+<li>将树莓派3的硬件串口与mini串口默认映射对换</li>
+</ol>
+<p>执行下列命令修改配置文件：</p>
+<p><code>sudo nano /boot/config.txt</code></p>
+<p>在配置文件最后一行添加</p>
+<p><code>dtoverlay=pi3-miniuart-bt</code></p>
+<ol start="2">
+<li>禁用串口的控制台功能</li>
+</ol>
+<p>执行下面两条命令：<br><code>sudo systemctl stop serial-getty@ttyAMA0.service</code><br><code>sudo systemctl disable serial-getty@ttyAMA0.service</code><br>再修改配置文件：<br><code>sudo nano /boot/cmdline.txt</code></p>
+<p>删除语句 console=serial0,115200，最后重启树莓派，让修改生效。</p>
+<h3 id="python接收扫码枪的数据"><a href="#python接收扫码枪的数据" class="headerlink" title="python接收扫码枪的数据"></a>python接收扫码枪的数据</h3><p>扫码枪本质也是通过模拟建模来输入数据的，一般输入的字符间隔时间都在80毫秒以内， 根据这个原理， 使用keboard库来处理扫码枪扫描的数据。</p>
+<p>首先安装keyboard包：</p>
+<p><code>pip install keyboard</code></p>
+<p>下面贴出代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> keyboard, threading, time, serial</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">lock = threading.Lock()</span><br><span class="line"></span><br><span class="line">ser = serial.Serial(<span class="string">'/dev/ttyAMA0'</span>, <span class="number">115200</span>)</span><br><span class="line"></span><br><span class="line">code = <span class="string">''</span>  <span class="comment"># 扫码枪扫出的内容</span></span><br><span class="line">next_code = <span class="string">''</span></span><br><span class="line">last_time = <span class="literal">None</span></span><br><span class="line">last_code = <span class="string">''</span></span><br><span class="line">next_time = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 处理按键KEY_DOWN事件，拼出code</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_press</span><span class="params">(event)</span>:</span></span><br><span class="line">    lock.acquire()</span><br><span class="line">    <span class="keyword">global</span> code, next_code, last_time, last_code, next_time</span><br><span class="line">    next_time = datetime.now().timestamp()</span><br><span class="line">    next_code = event.name</span><br><span class="line">    is_modifier = keyboard.is_modifier(next_code)</span><br><span class="line">    <span class="keyword">if</span> last_time == <span class="literal">None</span> <span class="keyword">and</span> last_code == <span class="string">''</span>:</span><br><span class="line">        <span class="keyword">if</span> is_modifier:</span><br><span class="line">            code = <span class="string">''</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            code = next_code</span><br><span class="line">    <span class="keyword">if</span> last_time != <span class="literal">None</span> <span class="keyword">and</span> last_code != <span class="string">''</span> <span class="keyword">and</span> (next_time - last_time) &lt;= <span class="number">0.08</span> <span class="keyword">and</span> is_modifier != <span class="literal">True</span>:</span><br><span class="line">        code += next_code</span><br><span class="line">    <span class="keyword">if</span> last_time != <span class="literal">None</span> <span class="keyword">and</span> last_code != <span class="string">''</span> <span class="keyword">and</span> (next_time - last_time) &gt; <span class="number">0.08</span>:</span><br><span class="line">        <span class="keyword">if</span> is_modifier:</span><br><span class="line">            code = <span class="string">''</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            code = next_code</span><br><span class="line">    last_code = next_code</span><br><span class="line">    last_time = next_time</span><br><span class="line">    lock.release()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    keyboard.on_press(handle_press, suppress=<span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        time.sleep(<span class="number">0.08</span>)</span><br><span class="line">        <span class="comment"># 在这里可以对拿到的数据做处理，这里是简单的把数据通过串口发送出去</span></span><br><span class="line">        ser.write(code)</span><br><span class="line">        code = <span class="string">''</span></span><br></pre></td></tr></table></figure>
+<h3 id="电脑端通过串口接收数据并处理"><a href="#电脑端通过串口接收数据并处理" class="headerlink" title="电脑端通过串口接收数据并处理"></a>电脑端通过串口接收数据并处理</h3><p>电脑连接上USB转TTL线，然后可以运行下面的代码来接收数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> serial, time</span><br><span class="line"></span><br><span class="line">ser = serial.Serial(<span class="string">'COM3'</span>, <span class="number">115200</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="comment"># size的值可能每次循环的时候会变化</span></span><br><span class="line">        size = ser.inWaiting()               <span class="comment"># 获得缓冲区字符</span></span><br><span class="line">        <span class="keyword">if</span> size != <span class="number">0</span>:</span><br><span class="line">            <span class="comment"># 如果确定要读取数据的规则，read函数参数可以是一个定值</span></span><br><span class="line">            response = ser.read(size=<span class="number">13</span>)        <span class="comment"># 读取内容并显示</span></span><br><span class="line">            <span class="comment"># 这里可以进行具体的操作，比如模拟键盘输出     </span></span><br><span class="line">            ser.flushInput()                 <span class="comment"># 清空接收缓存区</span></span><br><span class="line">            <span class="comment"># time.sleep(0.1)                  # 软件延时</span></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    ser.close()</span><br></pre></td></tr></table></figure></section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#python">
+    <span class="tag-code">python</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/post/React高阶组件/">
+        <span class="nav-arrow">← </span>
+        
+          React高阶组件
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#python实现树莓派中转扫码枪"><span class="toc-nav-text">python实现树莓派中转扫码枪</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#使用串口前树莓派的配置"><span class="toc-nav-text">使用串口前树莓派的配置</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#python接收扫码枪的数据"><span class="toc-nav-text">python接收扫码枪的数据</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#电脑端通过串口接收数据并处理"><span class="toc-nav-text">电脑端通过串口接收数据并处理</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://blog.zhangdecai.top/post/python实现树莓派中转扫码枪/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
