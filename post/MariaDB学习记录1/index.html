@@ -10,7 +10,7 @@
   
   <title>
     
-      React高阶组件 | Harry&#39;s Blog
+      MariaDB安装及一些准备工作 | Harry&#39;s Blog
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -114,8 +114,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>React高阶组件</h2>
-  <p class="post-date">2019-10-20</p>
+  <h2>MariaDB安装及一些准备工作</h2>
+  <p class="post-date">2019-10-31</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -123,34 +123,37 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h3 id="React高阶组件"><a href="#React高阶组件" class="headerlink" title="React高阶组件"></a>React高阶组件</h3><p>高阶组件（ higher-order component），类似于高阶函数，它接受 React 组件作为输入，输出一个新的 React 组件。实现高阶组件的方法有如下两种：</p>
-<ul>
-<li>属性代理（ props proxy） 。高阶组件通过被包裹的 React 组件来操作 props</li>
-<li>反向继承（ inheritance inversion） 。高阶组件继承于被包裹的 React 组件</li>
-</ul>
-<p>下面讲解这两种实现方式：</p>
-<ol>
-<li>属性代理</li>
+    <section class="markdown-content"><p>MariaDB数据库是MySQL数据库作者在MySQL被oracle收购之后，基于MySQL社区版而开发的分支。一直有传言MySQL被收购之后有闭源的风险， MySQL的作者正是不满这种做法才决定开发MariaDB数据库，而MariaDB和MySQL基本上是一致的，其守护进程也叫mysqld，所以对于考虑商业风险的公司，从MySQL迁移到MariaDB可以做到无缝迁移。只有使用到MariaDB有而MySQL没有的特性时才需要特别需要学习相关的知识。<a href="http://dev.mysql.com/downloads/mysql/" title="external" target="_blank" rel="noopener">MySQL下载地址</a> <a href="https://downloads.mariadb.org/mariadb/" title="external" target="_blank" rel="noopener">MariaDB下载地址</a></p>
+<h3 id="确定MariaDB有没有安装"><a href="#确定MariaDB有没有安装" class="headerlink" title="确定MariaDB有没有安装"></a>确定MariaDB有没有安装</h3><ol>
+<li>在 Linux 或 Mac 系统</li>
 </ol>
-<p>属性代理是常见高阶组件的实现方法，我们通过一个例子来说明：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'React'</span>;</span><br><span class="line"><span class="keyword">const</span> MyContainer = <span class="function">(<span class="params">WrappedComponent</span>) =&gt;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">        render() &#123;</span><br><span class="line">            <span class="keyword">return</span> &lt;WrappedComponent &#123;...this.props&#125; /&gt;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>从这里看到最重要的部分是 render 方法中返回了传入 WrappedComponent 的 React 组件。这样，我们就可以通过高阶组件来传递 props，这种方法即为属性代理。高阶组件可以这样使用：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'React'</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> MyContainer(MyComponent);</span><br></pre></td></tr></table></figure>
-<p>或者使用装饰器:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'React'</span>;</span><br><span class="line"></span><br><span class="line">@MyContainer</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">render() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> MyComponent;</span><br></pre></td></tr></table></figure></p>
-<p>属性代理可以控制 props, 通过 refs 使用引用, 抽象 state还可以使用其他元素包裹 WrappedComponent</p>
+<p><code>ps aux | grep mysql</code></p>
 <ol start="2">
-<li>反向继承</li>
+<li>windows系统</li>
 </ol>
-<p>从字面意思上看，它一定与继承特性相关。我们同样来看一个简单的实现：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MyContainer = <span class="function">(<span class="params">WrappedComponent</span>) =&gt;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">WrappedComponent</span> </span>&#123;</span><br><span class="line">        render() &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.render();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>正如所见，高阶组件返回的组件继承于 WrappedComponent。因为被动地继承了 WrappedComponent，所有的调用都会反向，这也是这种方法的由来。反向继承可以渲染劫持，</p>
+<p><code>tasklist /fi &quot;IMAGENAME eq mysqld&quot;</code></p>
+<p>上面只是确定mysqld有没有运行，可以用<code>mysqladmin -p version status</code>来进一步确定有没有安装</p>
+<h3 id="安装后给root设置初始密码"><a href="#安装后给root设置初始密码" class="headerlink" title="安装后给root设置初始密码"></a>安装后给root设置初始密码</h3><p>改变 root 密码的方法有多种，比如使用管理工具 mysqladmin：</p>
+<p><code>mysqladmin -u root -p flush-privileges password</code></p>
+<p>初始密码没有设置，直接回车，然后输入要设置的密码</p>
+<p>还可以客户端连接更改密码：</p>
+<p>查看所有用户：<br><code>mysql -u root -p -e &quot;SELECT User,Host FROM mysql.user;&quot;</code><br>更改密码及删除一些用户：</p>
+<p><code>mysql -u root -p -e &quot;SET PASSWORD FOR &#39;root&#39;@&#39;127.0.0.1&#39; PASSWORD(&#39;new_pwd&#39;);&quot;</code><br><code>mysql -u root -p -e &quot;SET PASSWORD FOR &#39;root&#39;@&#39;localhost&#39; PASSWORD(&#39;new_pwd&#39;);&quot;</code><br><code>mysql -u root -p -e &quot;DROP USER &#39;root&#39;@&#39;%&#39;;&quot;</code></p>
+<p>修改完成后用下面的命令让密码生效：<br><code>mysqladmin -u root -p flush-privileges</code></p>
+<h3 id="创建用户及赋予用户权限："><a href="#创建用户及赋予用户权限：" class="headerlink" title="创建用户及赋予用户权限："></a>创建用户及赋予用户权限：</h3><p>一般都是新建一些用户来操作数据库，而不是用root用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p -e &quot;GRANT USAGE ON *.*</span><br><span class="line">TO &apos;russell&apos;@&apos;localhost&apos;</span><br><span class="line">IDENTIFIED BY &apos;Rover#My_1st_Dog&amp;Not_Yours!&apos;;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>赋予用户查询的权限：</p>
+<p><code>mysql -u root -p -e &quot;GRANT SELECT ON *.* TO &#39;russell&#39;@&#39;localhost&#39;;&quot;</code></p>
+<p>查询用户的权限：<br><code>mysql -u root -p -e &quot;SHOW GRANTS FOR &#39;russell&#39;@&#39;localhost&#39; \G&quot;</code></p>
+<p>赋予用户所有的权限：</p>
+<p><code>mysql -u root -p -e &quot;GRANT ALL ON *.* TO &#39;russell&#39;@&#39;localhost&#39;;&quot;</code></p>
 </section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#前端开发">
-    <span class="tag-code">前端开发</span>
+  <a href="/tags#数据库">
+    <span class="tag-code">数据库</span>
   </a>
 
       </div>
@@ -161,17 +164,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/post/import-psycopg2报错undefined-symbol-PQconninfo的解决方法/">
+      <a class="nav-left" href="/post/React高阶组件/">
         <span class="nav-arrow">← </span>
         
-          import psycopg2报错undefined symbol: PQconninfo的解决方法
+          React高阶组件
         
       </a>
     
     
-      <a class="nav-right" href="/post/MariaDB学习记录1/">
+      <a class="nav-right" href="/post/python实现树莓派中转扫码枪/">
         
-          MariaDB安装及一些准备工作
+          python实现树莓派中转扫码枪
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -196,7 +199,7 @@
   <div class="toc-main">
     <strong class="toc-title">文章目录</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#React高阶组件"><span class="toc-nav-text">React高阶组件</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#确定MariaDB有没有安装"><span class="toc-nav-text">确定MariaDB有没有安装</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安装后给root设置初始密码"><span class="toc-nav-text">安装后给root设置初始密码</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#创建用户及赋予用户权限："><span class="toc-nav-text">创建用户及赋予用户权限：</span></a></li></ol>
     
   </div>
 </aside>
@@ -206,7 +209,7 @@
 
 <script>
   (function () {
-    var url = 'https://blog.zhangdecai.top/post/React高阶组件/';
+    var url = 'https://blog.zhangdecai.top/post/MariaDB学习记录1/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
